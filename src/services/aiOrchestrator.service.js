@@ -105,20 +105,20 @@ async function analyzeWithGroq(context, ruleDecision, config) {
 }
 
 function analyzeWithLocalFallback(context, ruleDecision) {
-  if (context.metrics.senderTransfersLast5Minutes > 3 && context.transaction.points > 10000) {
+  if (context.metrics.senderTransfersLast1Minute >= 3) {
     console.info('[ai] local fallback decision', {
       transactionId: context.transaction.id,
       riskLevel: 'RED',
-      reason: 'burst_with_high_amount'
+      reason: 'burst_detected'
     });
 
     return {
       model: 'local-mock',
       riskLevel: 'RED',
       recommendedAction: 'REJECT',
-      confidence: 0.86,
-      reasoning: 'Rafaga de transferencias con monto alto. Se eleva el riesgo para bloquear la operacion.',
-      suggestedRule: 'Agregar umbral combinado de frecuencia y monto acumulado por ventana de 5 minutos.'
+      confidence: 0.88,
+      reasoning: 'Detección de ráfaga de transferencias consecutivas. Bloqueo preventivo de fraude.',
+      suggestedRule: 'Bloquear cuentas con ráfagas frecuentes de transferencias en corto tiempo.'
     };
   }
 

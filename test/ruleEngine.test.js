@@ -27,7 +27,7 @@ test('shared device with many accounts forces RED', () => {
 test('burst transfers score YELLOW and invokes AI path', () => {
   const context = baseContext({
     metrics: {
-      senderTransfersLast5Minutes: 4,
+      senderTransfersLast1Minute: 3,
       receiverUniqueSendersLast1Hour: 0
     }
   });
@@ -63,7 +63,7 @@ function baseContext(overrides = {}) {
       isNewForUser: false
     },
     metrics: {
-      senderTransfersLast5Minutes: 0,
+      senderTransfersLast1Minute: 0,
       receiverUniqueSendersLast1Hour: 0
     },
     graph: {
@@ -93,7 +93,7 @@ function baseContext(overrides = {}) {
       ...(overrides.device || {})
     },
     metrics: {
-      senderTransfersLast5Minutes: 0,
+      senderTransfersLast1Minute: 0,
       receiverUniqueSendersLast1Hour: 0,
       ...(overrides.metrics || {})
     },

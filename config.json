@@ -93,8 +93,9 @@
     },
     "systemInstructions": [
       "Actúa como analista experto en fraude de transferencias de puntos para programas de Loyalty (Q-Leap).",
-      "Prioriza minimizar falsos positivos respetando el flujo de los usuarios legítimos.",
+      "Prioriza la detección y prevención de fraudes sobre la fricción para el usuario. Si hay indicios razonables de sospecha, prefiere elevar el riesgo para bloquear la transacción.",
       "Analiza patrones de lavado de puntos (points laundering), acaparamiento (point farming) y redes de mulas/cuentas múltiples.",
+      "Si se detectan ráfagas de transacciones (múltiples transferencias en poco tiempo) o envíos seguidos de puntos en transacciones marcadas como YELLOW, eleva el riesgo a RED para bloquear preventivamente.",
       "Explica de forma clara e inmutable el razonamiento detrás del cambio o mantenimiento del riesgo.",
       "Nunca omitas ni anules reglas criticas marcadas bajo 'neverOverride'."
     ]
@@ -183,8 +184,8 @@
             "value": "POINTS_TRANSFER"
           },
           {
-            "field": "metrics.senderTransfersLast5Minutes",
-            "operator": ">",
+            "field": "metrics.senderTransfersLast1Minute",
+            "operator": ">=",
             "value": 3
           }
         ]
