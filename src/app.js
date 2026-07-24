@@ -23,6 +23,17 @@ export function createApp() {
   // Serve static presentation & dashboard files
   app.use(express.static(path.join(__dirname, '../public')));
 
+  app.get('/', (_req, res) => {
+    res.json({
+      service: 'q-leap-fraud-decision-engine',
+      status: 'ok',
+      endpoints: {
+        health: 'GET /health',
+        evaluateTransfer: 'POST /api/v1/fraud/evaluate'
+      }
+    });
+  });
+
   app.get('/health', (_req, res) => {
     res.json({
       status: 'ok',

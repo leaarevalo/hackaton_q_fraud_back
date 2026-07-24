@@ -13,6 +13,7 @@ export async function evaluateFraud(payload) {
   const ruleDecision = evaluateRules(enrichedContext, config);
 
   const aiShouldRun = config.ai.enabled && config.ai.invokeOn.includes(ruleDecision.riskLevel);
+  logAiInvocationDecision(normalizedTransfer, ruleDecision, aiShouldRun);
   const aiAnalysis = aiShouldRun ? await analyzeWithAi(enrichedContext, ruleDecision, config) : null;
   const finalDecision = applyAiDecision(ruleDecision, aiAnalysis);
   const audit = await saveAudit(enrichedContext, finalDecision, aiAnalysis);
@@ -33,6 +34,27 @@ export async function evaluateFraud(payload) {
     },
     auditId: audit.id
   };
+}
+
+function logAiInvocationDecision(transfer, ruleDecision, aiShouldRun) {
+  const matchedRuleIds = ruleDecision.matchedRules.map((rule) => rule.id);
+
+  if (!aiShouldRun) {
+    console.info('[ai] skipped', {
+      transactionId: transfer.transaction.id,
+      riskLevel: ruleDecision.riskLevel,
+      riskScore: ruleDecision.riskScore,
+      matchedRules: matchedRuleIds
+    });
+    return;
+  }
+
+  console.info('[ai] invocation requested', {
+    transactionId: transfer.transaction.id,
+    riskLevel: ruleDecision.riskLevel,
+    riskScore: ruleDecision.riskScore,
+    matchedRules: matchedRuleIds
+  });
 }
 
 function applyAiDecision(ruleDecision, aiAnalysis) {
