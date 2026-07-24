@@ -210,136 +210,144 @@
       </div>
     </section>
 
-    <!-- SLIDE 4: ALCANCE 1 Y ENTORNO EN VIVO (PLAYGROUND INTERACTIVO) -->
+    <!-- SLIDE 4: ALCANCE 1 Y ENTORNO EN VIVO (PLAYGROUND DE CASOS) -->
     <section id="slide-4" class="slide flex flex-col justify-center">
-      <div class="w-full space-y-4">
+      <div class="w-full space-y-6">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div>
-            <span class="text-brand-electric font-semibold tracking-widest uppercase text-sm">Prueba en Vivo</span>
-            <h2 class="text-3xl md:text-4xl font-extrabold text-white">Alcance 1: Demo & Entorno en Vivo</h2>
+          <div class="space-y-1">
+            <span class="text-brand-electric font-semibold tracking-widest uppercase text-sm">Escenarios Reales</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-white">Evaluación de Casos en Tiempo Real</h2>
           </div>
-          <div class="mt-2 md:mt-0 flex gap-2">
-            <button onclick="loadScenario('green')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-neon/10 text-brand-neon border border-brand-neon/20 hover:bg-brand-neon/20 transition-all">
-              Caso 1: Green (Regular)
+          
+          <!-- Selector de Casos -->
+          <div class="flex gap-2 mt-3 md:mt-0">
+            <button onclick="showCase(1)" id="tab-btn-1" class="px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-brand-neon/20 text-brand-neon border-brand-neon/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+              Caso 1: Green
             </button>
-            <button onclick="loadScenario('yellow')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-amber/10 text-brand-amber border border-brand-amber/20 hover:bg-brand-amber/20 transition-all">
-              Caso 2: Yellow (IA)
+            <button onclick="showCase(2)" id="tab-btn-2" class="px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white">
+              Caso 2: Yellow
             </button>
-            <button onclick="loadScenario('red')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-rose/10 text-brand-rose border border-brand-rose/20 hover:bg-brand-rose/20 transition-all">
-              Caso 3: Red (Farming)
+            <button onclick="showCase(3)" id="tab-btn-3" class="px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white">
+              Caso 3: Red
             </button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <!-- Left Panel: Simulator Form -->
-          <div class="glass p-5 rounded-2xl border border-white/5 lg:col-span-5 flex flex-col justify-between">
+        <div class="max-w-2xl mx-auto w-full relative h-[420px]">
+          
+          <!-- Caso 1: Green Card -->
+          <div id="case-card-1" class="absolute inset-0 glass p-6 rounded-2xl border border-brand-neon/25 transition-all duration-500 shadow-[0_0_20px_rgba(16,185,129,0.1)] flex flex-col justify-between opacity-100 scale-100 z-10">
             <div>
-              <div class="flex items-center gap-2 mb-3">
-                <div class="h-2 w-2 rounded-full bg-brand-electric animate-pulse"></div>
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Cliente de Transferencia</h3>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-brand-neon/15 text-brand-neon border border-brand-neon/30">
+                  APROBADA (GREEN)
+                </span>
+                <span class="font-mono text-xs text-brand-neon font-bold">Score: 04/100</span>
               </div>
               
-              <div class="space-y-3">
-                <div>
-                  <label class="block text-[10px] uppercase tracking-wider text-slate-400 font-medium mb-1">Monto en Puntos</label>
-                  <input id="sim-points" type="number" class="w-full bg-dark-base border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-brand-electric transition-colors bg-[#080c14]" value="5000">
+              <div class="space-y-4">
+                <div class="bg-[#080c14] border border-white/5 rounded-xl p-3.5 space-y-2 text-sm">
+                  <div class="flex justify-between"><span class="text-slate-400">Origen (Sender):</span> <span class="text-white font-medium">Leandro Arevalo</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Destino (Receiver):</span> <span class="text-white font-medium">Salvador Woinilwicz</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Transferencia:</span> <span class="text-brand-neon font-bold">1,500 puntos</span></div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-slate-400 font-medium mb-1">ID Sender</label>
-                    <input id="sim-sender-id" type="text" class="w-full bg-dark-base border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white font-mono focus:outline-none focus:border-brand-electric bg-[#080c14]" value="usr_sender_123">
-                  </div>
-                  <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-slate-400 font-medium mb-1">Antigüedad Cuenta (Min)</label>
-                    <input id="sim-sender-age" type="number" class="w-full bg-dark-base border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-brand-electric bg-[#080c14]" value="45">
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-slate-400 font-medium mb-1">IP Sender</label>
-                    <input id="sim-sender-ip" type="text" class="w-full bg-dark-base border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white font-mono focus:outline-none focus:border-brand-electric bg-[#080c14]" value="181.44.12.90">
-                  </div>
-                  <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-slate-400 font-medium mb-1">IP Receiver</label>
-                    <input id="sim-receiver-ip" type="text" class="w-full bg-dark-base border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white font-mono focus:outline-none focus:border-brand-electric bg-[#080c14]" value="181.44.12.90">
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-slate-400 font-medium mb-1">Huella de Dispositivo</label>
-                    <input id="sim-device-fp" type="text" class="w-full bg-dark-base border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white font-mono focus:outline-none focus:border-brand-electric bg-[#080c14]" value="fp_abc123xyz789">
-                  </div>
-                  <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-slate-400 font-medium mb-1">Cuentas en Dispositivo</label>
-                    <input id="sim-device-accounts" type="number" class="w-full bg-dark-base border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-brand-electric bg-[#080c14]" value="1">
+                <div class="space-y-1">
+                  <h4 class="font-bold text-slate-300 uppercase tracking-wider text-[9px]">Reglas Disparadas</h4>
+                  <div class="bg-white/5 border border-white/10 rounded px-2.5 py-2 text-xs text-slate-400">
+                    <span class="italic">Ninguna alerta de riesgo. Historial recurrente limpio.</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="pt-4 mt-4 border-t border-white/5">
-              <button onclick="evaluateRisk()" id="btn-evaluate" class="w-full py-2.5 bg-gradient-to-r from-brand-electric to-brand-violet hover:from-brand-electric hover:to-brand-neon text-white font-bold text-sm rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_25px_rgba(16,185,129,0.3)]">
-                Evaluar Transferencia en Vivo
-              </button>
-            </div>
-          </div>
-
-          <!-- Right Panel: Analyst Audit Console -->
-          <div class="glass p-5 rounded-2xl border border-white/5 lg:col-span-7 flex flex-col justify-between h-[380px] lg:h-auto">
-            <div class="flex items-center justify-between border-b border-white/5 pb-2.5 mb-2.5">
-              <div class="flex items-center gap-2">
-                <div class="h-2 w-2 rounded-full bg-brand-neon animate-pulse"></div>
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Dashboard de Auditoría</h3>
-              </div>
-              <span id="audit-api-indicator" class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 text-slate-400 border border-white/10">Evaluador Local (Fallback)</span>
-            </div>
-
-            <div class="grid grid-cols-12 gap-4 flex-grow overflow-hidden">
-              <!-- Left side: Gauge and Scores -->
-              <div class="col-span-5 flex flex-col justify-center items-center text-center border-r border-white/5 pr-4">
-                <div class="relative w-28 h-28 flex items-center justify-center rounded-full border border-white/5 bg-[#080c14]">
-                  <div id="risk-score-circle" class="absolute inset-2 rounded-full border-4 border-brand-neon flex flex-col items-center justify-center">
-                    <span id="risk-score-val" class="text-2xl font-black font-mono text-white">0</span>
-                    <span class="text-[8px] uppercase tracking-widest text-slate-400">Score</span>
-                  </div>
-                </div>
-                <div class="mt-3">
-                  <span id="risk-badge" class="px-3 py-1 rounded-full text-xs font-black tracking-widest bg-brand-neon/20 text-brand-neon border border-brand-neon/30">
-                    GREEN
-                  </span>
-                </div>
-              </div>
-
-              <!-- Right side: Rules and AI outputs -->
-              <div class="col-span-7 flex flex-col justify-between overflow-y-auto space-y-2 text-xs">
-                <div>
-                  <h4 class="font-bold text-slate-300 mb-1 uppercase tracking-wider text-[10px]">Reglas Disparadas</h4>
-                  <div id="rules-triggered-container" class="space-y-1 max-h-[80px] overflow-y-auto pr-1">
-                    <span class="text-slate-400 text-xs italic">Ninguna regla de riesgo superada.</span>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 class="font-bold text-slate-300 mb-1 uppercase tracking-wider text-[10px]">Explicabilidad IA (XAI)</h4>
-                  <div class="bg-[#080c14] border border-white/10 rounded-lg p-2 font-mono text-[10px] overflow-y-auto h-[100px] text-slate-400 leading-normal" id="xai-reasoning">
-                    <span class="italic text-slate-500">// Esperando que se requiera la IA (solo triggers en riesgo YELLOW o BLUE)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="pt-2.5 mt-2.5 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">
-              <div class="flex items-center gap-1.5">
+            <div class="pt-4 border-t border-white/5 space-y-2">
+              <h4 class="font-bold text-brand-neon uppercase tracking-wider text-xs flex items-center gap-1.5">
                 <span class="h-1.5 w-1.5 rounded-full bg-brand-neon"></span>
-                <span>Audit Log ID: <span id="audit-log-id" class="font-mono text-white font-semibold">N/A</span></span>
+                Explicabilidad IA (XAI)
+              </h4>
+              <div class="bg-[#080c14]/80 border border-white/10 rounded-xl p-4 text-base font-medium italic text-slate-100 leading-relaxed min-h-[90px] flex items-center">
+                <span>"Transacción aprobada automáticamente. Se detectó un historial común de interacciones frecuentes y seguras entre ambos usuarios. Claramente se llevan bien y operan sin riesgo alguno."</span>
               </div>
-              <span id="audit-execution-time" class="font-mono text-brand-neon font-medium">0ms</span>
             </div>
           </div>
+
+          <!-- Caso 2: Yellow Card -->
+          <div id="case-card-2" class="absolute inset-0 glass p-6 rounded-2xl border border-brand-amber/25 transition-all duration-500 shadow-[0_0_20px_rgba(245,158,11,0.1)] flex flex-col justify-between opacity-0 scale-95 pointer-events-none z-0">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-brand-amber/15 text-brand-amber border border-brand-amber/30">
+                  REVISIÓN MANUAL (YELLOW)
+                </span>
+                <span class="font-mono text-xs text-brand-amber font-bold">Score: 48/100</span>
+              </div>
+              
+              <div class="space-y-4">
+                <div class="bg-[#080c14] border border-white/5 rounded-xl p-3.5 space-y-2 text-sm">
+                  <div class="flex justify-between"><span class="text-slate-400">Origen (Sender):</span> <span class="text-white font-medium">Leandro Arevalo</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Destino (Receiver):</span> <span class="text-white font-medium">Alexander Silva (TL)</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Transferencia:</span> <span class="text-brand-amber font-bold">4,200 puntos</span></div>
+                </div>
+
+                <div class="space-y-1">
+                  <h4 class="font-bold text-slate-300 uppercase tracking-wider text-[9px]">Reglas Disparadas</h4>
+                  <div class="flex justify-between items-center bg-brand-amber/5 border border-brand-amber/20 rounded px-2.5 py-2 text-xs">
+                    <span class="font-mono text-white font-bold">BURST_TRANSFER_SAME_USER</span>
+                    <span class="text-brand-amber font-bold">+40 pts</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-white/5 space-y-2">
+              <h4 class="font-bold text-brand-amber uppercase tracking-wider text-xs flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 rounded-full bg-brand-amber animate-pulse"></span>
+                Explicabilidad IA (XAI)
+              </h4>
+              <div class="bg-[#080c14]/80 border border-white/10 rounded-xl p-4 text-base font-medium italic text-slate-100 leading-relaxed min-h-[90px] flex items-center">
+                <span>"Segunda transferencia en muy poco tiempo hacia su TL. Requiere revisión manual de Mati Blayer para verificar que Leandro no esté intentando comprar su aprobación en las pull requests o sobornarlo con puntos."</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Caso 3: Red Card -->
+          <div id="case-card-3" class="absolute inset-0 glass p-6 rounded-2xl border border-brand-rose/25 transition-all duration-500 shadow-[0_0_20px_rgba(244,63,94,0.1)] flex flex-col justify-between opacity-0 scale-95 pointer-events-none z-0">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-brand-rose/15 text-brand-rose border border-brand-rose/30">
+                  BLOQUEADA (RED)
+                </span>
+                <span class="font-mono text-xs text-brand-rose font-bold">Score: 98/100</span>
+              </div>
+              
+              <div class="space-y-4">
+                <div class="bg-[#080c14] border border-white/5 rounded-xl p-3.5 space-y-2 text-sm">
+                  <div class="flex justify-between"><span class="text-slate-400">Origen (Sender):</span> <span class="text-white font-medium">Leandro Arevalo</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Destino (Receiver):</span> <span class="text-white font-medium">Federico Karra</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Transferencia:</span> <span class="text-brand-rose font-bold">15,000 puntos</span></div>
+                </div>
+
+                <div class="space-y-1">
+                  <h4 class="font-bold text-slate-300 uppercase tracking-wider text-[9px]">Reglas Disparadas</h4>
+                  <div class="flex justify-between items-center bg-brand-rose/5 border border-brand-rose/20 rounded px-2.5 py-2 text-xs">
+                    <span class="font-mono text-white font-bold">CONSECUTIVE_TRANSFER_LIMIT</span>
+                    <span class="text-brand-rose font-bold">+95 pts</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-white/5 space-y-2">
+              <h4 class="font-bold text-brand-rose uppercase tracking-wider text-xs flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 rounded-full bg-brand-rose animate-pulse"></span>
+                Explicabilidad IA (XAI)
+              </h4>
+              <div class="bg-[#080c14]/80 border border-white/10 rounded-xl p-4 text-base font-medium italic text-slate-100 leading-relaxed min-h-[90px] flex items-center">
+                <span>"Tercera transferencia consecutiva bloqueada. Es altamente probable que se trate de un intercambio en el mercado negro por una docena de empanadas. Karra figura como sospechoso crítico de liderar el tráfico ilegal de empanadas."</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -567,253 +575,28 @@
       if (touchEndX > touchStartX + 60) prevSlide();
     });
 
-    // Live Demo Scenarios Data
-    const scenarios = {
-      green: {
-        points: 5000,
-        senderId: 'usr_sender_123',
-        senderAge: 45000,
-        senderIp: '181.44.12.90',
-        receiverIp: '190.111.45.67',
-        deviceFp: 'fp_abc123xyz789',
-        deviceAccounts: 1
-      },
-      yellow: {
-        points: 8500,
-        senderId: 'usr_burst_999',
-        senderAge: 12000,
-        senderIp: '181.44.12.90',
-        receiverIp: '181.44.12.91',
-        deviceFp: 'fp_burst_hash_99',
-        deviceAccounts: 2
-      },
-      red: {
-        points: 15000,
-        senderId: 'usr_bot_004',
-        senderAge: 5,
-        senderIp: '181.44.12.90',
-        receiverIp: '181.44.12.90',
-        deviceFp: 'fp_farming_emul_999',
-        deviceAccounts: 5
-      }
-    };
-
-    function loadScenario(type) {
-      const data = scenarios[type];
-      if (!data) return;
-
-      document.getElementById('sim-points').value = data.points;
-      document.getElementById('sim-sender-id').value = data.senderId;
-      document.getElementById('sim-sender-age').value = data.senderAge;
-      document.getElementById('sim-sender-ip').value = data.senderIp;
-      document.getElementById('sim-receiver-ip').value = data.receiverIp;
-      document.getElementById('sim-device-fp').value = data.deviceFp;
-      document.getElementById('sim-device-accounts').value = data.deviceAccounts;
-
-      // Update button visual highlight
-      const btn = document.getElementById('btn-evaluate');
-      btn.className = `w-full py-2.5 bg-gradient-to-r text-white font-bold text-sm rounded-xl transition-all duration-300 shadow-md ${
-        type === 'green' ? 'from-brand-neon to-emerald-700 shadow-brand-neon/20' :
-        type === 'yellow' ? 'from-brand-amber to-amber-700 shadow-brand-amber/20' :
-        'from-brand-rose to-rose-700 shadow-brand-rose/20'
-      }`;
-    }
-
-    // Evaluate Risk Flow
-    async function evaluateRisk() {
-      const btn = document.getElementById('btn-evaluate');
-      const originalText = btn.textContent;
-      btn.textContent = 'Procesando evaluación...';
-      btn.disabled = true;
-
-      // Collect payload parameters
-      const payload = {
-        tenant: "default",
-        transactionId: "tx_trf_" + Date.now(),
-        timestamp: new Date().toISOString(),
-        type: "POINTS_TRANSFER",
-        points: parseInt(document.getElementById('sim-points').value),
-        sender: {
-          userId: document.getElementById('sim-sender-id').value,
-          accountAgeMinutes: parseInt(document.getElementById('sim-sender-age').value),
-          ip: document.getElementById('sim-sender-ip').value
-        },
-        receiver: {
-          userId: "usr_receiver_999",
-          ip: document.getElementById('sim-receiver-ip').value
-        },
-        device: {
-          fingerprintHash: document.getElementById('sim-device-fp').value,
-          associatedAccountsCount: parseInt(document.getElementById('sim-device-accounts').value),
-          isNewForUser: true,
-          userAgent: navigator.userAgent,
-          platform: navigator.platform
-        },
-        location: {
-          country: "AR",
-          city: "Buenos Aires"
-        }
-      };
-
-      const startTime = performance.now();
-
-      try {
-        // Attempt fetch request to local api
-        const response = await fetch('/api/v1/fraud/evaluate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          throw new Error('API server returned error code ' + response.status);
-        }
-
-        const data = await response.json();
-        const duration = Math.round(performance.now() - startTime);
-        
-        document.getElementById('audit-api-indicator').textContent = 'Q-Sentinel Engine API';
-        document.getElementById('audit-api-indicator').classList.replace('text-slate-400', 'text-brand-neon');
-        document.getElementById('audit-api-indicator').classList.replace('bg-white/5', 'bg-brand-neon/10');
-        renderResult(data, duration);
-
-      } catch (err) {
-        console.warn('Real API call failed. Falling back to local offline engine mockup. Details:', err);
-        
-        // Setup visual indicator to show mock status
-        document.getElementById('audit-api-indicator').textContent = 'Simulación Local (Offline)';
-        document.getElementById('audit-api-indicator').classList.remove('text-brand-neon');
-        document.getElementById('audit-api-indicator').classList.add('text-slate-400');
-        
-        const duration = Math.round(performance.now() - startTime) + 12; // simulated execution
-        simulateResult(payload, duration);
-      } finally {
-        btn.textContent = originalText;
-        btn.disabled = false;
-      }
-    }
-
-    // Render Real Backend API Response
-    function renderResult(result, duration) {
-      const riskLevel = result.riskLevel || 'GREEN';
-      const riskScore = result.riskScore !== undefined ? result.riskScore : 0;
-      const rules = result.rulesTriggered || [];
-      const aiData = result.aiEvaluation || null;
-
-      updateUIElements(riskLevel, riskScore, rules, aiData, duration, result.transactionId || 'tx_' + Math.random().toString(36).substr(2, 9));
-    }
-
-    // Simulator engine fallback
-    function simulateResult(payload, duration) {
-      // Local evaluation algorithms matching the specification
-      let riskScore = 0;
-      const rules = [];
-      let riskLevel = 'GREEN';
-      
-      // Rule 1: NEW_ACCOUNT_FAST_TRANSFER
-      if (payload.sender.accountAgeMinutes < 60 && payload.points > 1000) {
-        riskScore += 35;
-        rules.push({ code: 'NEW_ACCOUNT_FAST_TRANSFER', score: 35, description: 'Cuenta origen con antigüedad < 60 min y transferencia > 1,000 puntos.' });
-      }
-
-      // Rule 2: MULTIPLE_ACCOUNTS_SAME_DEVICE_TRANSFER
-      if (payload.device.associatedAccountsCount > 3) {
-        riskLevel = 'RED';
-        riskScore = Math.max(riskScore, 85);
-        rules.push({ code: 'MULTIPLE_ACCOUNTS_SAME_DEVICE_TRANSFER', score: 85, description: 'Dispositivo utilizado por más de 3 cuentas distintas.' });
-      }
-
-      // Rule 5: SENDER_RECEIVER_SAME_IP_NEW_DEVICE
-      if (payload.sender.ip === payload.receiver.ip && payload.device.isNewForUser) {
-        riskScore += 25;
-        rules.push({ code: 'SENDER_RECEIVER_SAME_IP_NEW_DEVICE', score: 25, description: 'Remitente y destinatario comparten IP desde un dispositivo nuevo.' });
-      }
-
-      // Determine level based on rules if not overridden by RED rule
-      if (riskLevel !== 'RED') {
-        if (riskScore >= 60) {
-          riskLevel = 'RED';
-        } else if (riskScore >= 30) {
-          riskLevel = 'YELLOW';
+    // Toggle Case Cards in Slide 4
+    function showCase(num) {
+      for (let i = 1; i <= 3; i++) {
+        const card = document.getElementById(`case-card-${i}`);
+        const btn = document.getElementById(`tab-btn-${i}`);
+        if (i === num) {
+          card.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'z-0');
+          card.classList.add('opacity-100', 'scale-100', 'z-10');
+          
+          if (i === 1) {
+            btn.className = "px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-brand-neon/20 text-brand-neon border-brand-neon/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]";
+          } else if (i === 2) {
+            btn.className = "px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-brand-amber/20 text-brand-amber border-brand-amber/30 shadow-[0_0_15px_rgba(245,158,11,0.15)]";
+          } else if (i === 3) {
+            btn.className = "px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-brand-rose/20 text-brand-rose border-brand-rose/30 shadow-[0_0_15px_rgba(244,63,94,0.15)]";
+          }
         } else {
-          riskLevel = 'GREEN';
+          card.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'z-0');
+          card.classList.remove('opacity-100', 'scale-100', 'z-10');
+          btn.className = "px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white";
         }
       }
-
-      // AI intervention mock if Yellow/Red/Blue
-      let aiData = null;
-      if (riskLevel === 'YELLOW') {
-        aiData = {
-          decision: 'APPROVE_WITH_WARNING',
-          confidence: 0.82,
-          reasoning: 'La actividad comparte IPs comunes locales y el dispositivo es válido a pesar de la edad de la cuenta. No hay patrones históricos de botnet. Se recomienda aprobar con advertencia.',
-          suggestedRules: ['IP_PROXIMITY_ALERT']
-        };
-      } else if (riskLevel === 'RED') {
-        aiData = {
-          decision: 'REJECT',
-          confidence: 0.98,
-          reasoning: 'Múltiples credenciales de usuario activas en el mismo ID de dispositivo fingerprint en un intervalo corto. Indicador clásico de Account Farming.',
-          suggestedRules: ['DEVICE_BLACKLIST_AUTO']
-        };
-      }
-
-      updateUIElements(riskLevel, riskScore, rules, aiData, duration, payload.transactionId);
-    }
-
-    // Common UI updating logic
-    function updateUIElements(riskLevel, riskScore, rules, aiData, duration, txId) {
-      // Risk Badge Style Mapping
-      const badges = {
-        GREEN: { text: 'GREEN', class: 'bg-brand-neon/20 text-brand-neon border-brand-neon/30', color: '#10b981' },
-        YELLOW: { text: 'YELLOW', class: 'bg-brand-amber/20 text-brand-amber border-brand-amber/30', color: '#f59e0b' },
-        RED: { text: 'RED', class: 'bg-brand-rose/20 text-brand-rose border-brand-rose/30', color: '#f43f5e' },
-        BLUE: { text: 'BLUE', class: 'bg-brand-violet/20 text-brand-violet border-brand-violet/30', color: '#8b5cf6' }
-      };
-
-      const styling = badges[riskLevel] || badges.GREEN;
-      
-      const badge = document.getElementById('risk-badge');
-      badge.textContent = styling.text;
-      badge.className = `px-3 py-1 rounded-full text-xs font-black tracking-widest border ${styling.class}`;
-
-      // Score Gauge Update
-      document.getElementById('risk-score-val').textContent = riskScore;
-      const scoreCircle = document.getElementById('risk-score-circle');
-      scoreCircle.style.borderColor = styling.color;
-
-      // Rules list update
-      const rulesContainer = document.getElementById('rules-triggered-container');
-      if (rules.length === 0) {
-        rulesContainer.innerHTML = `<span class="text-slate-400 text-xs italic">Ninguna regla de riesgo superada.</span>`;
-      } else {
-        rulesContainer.innerHTML = rules.map(r => `
-          <div class="flex justify-between items-center bg-white/5 border border-white/10 rounded px-2 py-1 mb-1">
-            <span class="font-mono text-[10px] text-white font-bold">${r.code || r}</span>
-            <span class="text-brand-rose font-bold">+${r.score || 25} pts</span>
-          </div>
-        `).join('');
-      }
-
-      // XAI text update
-      const xaiContainer = document.getElementById('xai-reasoning');
-      if (aiData) {
-        xaiContainer.innerHTML = `
-<span class="text-brand-violet">// AI Orchestrator Output:</span>
-{
-  <span class="text-brand-electric">"decision"</span>: <span class="text-brand-neon">"${aiData.decision || aiData.riskLevel || 'N/A'}"</span>,
-  <span class="text-brand-electric">"confidence"</span>: <span class="text-brand-neon">${aiData.confidence || aiData.confidenceScore || 1.0}</span>,
-  <span class="text-brand-electric">"reasoning"</span>: <span class="text-slate-200">"${aiData.reasoning || aiData.reason || 'N/A'}"</span>
-}`;
-      } else {
-        xaiContainer.innerHTML = `<span class="italic text-slate-500">// Esperando que se requiera la IA (solo triggers en riesgo YELLOW o BLUE)</span>`;
-      }
-
-      // Execution metrics
-      document.getElementById('audit-log-id').textContent = txId;
-      document.getElementById('audit-execution-time').textContent = `${duration}ms`;
     }
   </script>
 </body>
