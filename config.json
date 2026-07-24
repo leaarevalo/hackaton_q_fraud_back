@@ -1,0 +1,264 @@
+{
+  "version": "1.0",
+  "tenant": "default",
+  "scope": "POINTS_TRANSFER_V1",
+  "engine": {
+    "mode": "RULES_FIRST",
+    "scoreStrategy": "WEIGHTED",
+    "defaultRisk": "GREEN",
+    "minimumRulesToEvaluate": 1
+  },
+  "riskLevels": {
+    "GREEN": {
+      "score": {
+        "min": 0,
+        "max": 29
+      },
+      "action": "APPROVE",
+      "description": "Transacción aprobada sin restricciones"
+    },
+    "YELLOW": {
+      "score": {
+        "min": 30,
+        "max": 59
+      },
+      "action": "APPROVE_WITH_WARNING",
+      "description": "Aprobada con advertencia o límites temporales"
+    },
+    "RED": {
+      "score": {
+        "min": 60,
+        "max": 100
+      },
+      "action": "REJECT",
+      "description": "Transacción rechazada por alto riesgo de fraude"
+    },
+    "BLUE": {
+      "manualReview": true,
+      "action": "MANUAL_REVIEW",
+      "description": "Requiere revisión manual por analista"
+    }
+  },
+  "deviceFingerprint": {
+    "enabled": true,
+    "attributes": [
+      "ip",
+      "userAgent",
+      "language",
+      "timezone",
+      "screen",
+      "platform",
+      "deviceId"
+    ],
+    "ttlDays": 365,
+    "maxAccountsPerDevice": 3
+  },
+  "cache": {
+    "provider": "redis",
+    "ttl": {
+      "transactions": "24h",
+      "devices": "365d",
+      "users": "180d",
+      "transferMetrics": "1h"
+    }
+  },
+  "ai": {
+    "enabled": true,
+    "invokeOn": [
+      "YELLOW",
+      "BLUE"
+    ],
+    "model": "gpt-5.5",
+    "temperature": 0.1,
+    "maxTokens": 800,
+    "can": {
+      "increaseRisk": true,
+      "decreaseRisk": true,
+      "createSuggestions": true,
+      "changeRules": false
+    },
+    "neverOverride": [
+      "SENDER_BLACKLIST",
+      "RECEIVER_BLACKLIST",
+      "DEVICE_BLACKLIST"
+    ],
+    "context": {
+      "historyDays": 90,
+      "includeDevice": true,
+      "includeIp": true,
+      "includeGeo": true,
+      "includeTransactions": true,
+      "includeRulesMatched": true,
+      "includeGraphMetrics": true
+    },
+    "systemInstructions": [
+      "Actúa como analista experto en fraude de transferencias de puntos para programas de Loyalty (Q-Leap).",
+      "Prioriza minimizar falsos positivos respetando el flujo de los usuarios legítimos.",
+      "Analiza patrones de lavado de puntos (points laundering), acaparamiento (point farming) y redes de mulas/cuentas múltiples.",
+      "Explica de forma clara e inmutable el razonamiento detrás del cambio o mantenimiento del riesgo.",
+      "Nunca omitas ni anules reglas criticas marcadas bajo 'neverOverride'."
+    ]
+  },
+  "rules": [
+    {
+      "id": "NEW_ACCOUNT_FAST_TRANSFER",
+      "enabled": true,
+      "priority": 100,
+      "score": 35,
+      "conditions": {
+        "operator": "AND",
+        "rules": [
+          {
+            "field": "transaction.type",
+            "operator": "==",
+            "value": "POINTS_TRANSFER"
+          },
+          {
+            "field": "sender.accountAgeMinutes",
+            "operator": "<",
+            "value": 60
+          },
+          {
+            "field": "transaction.points",
+            "operator": ">",
+            "value": 1000
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "SET_SCORE",
+          "value": 35
+        },
+        {
+          "type": "FLAG",
+          "reason": "Transferencia de alto monto desde cuenta recién creada"
+        }
+      ]
+    },
+    {
+      "id": "MULTIPLE_ACCOUNTS_SAME_DEVICE_TRANSFER",
+      "enabled": true,
+      "priority": 95,
+      "score": 60,
+      "conditions": {
+        "operator": "AND",
+        "rules": [
+          {
+            "field": "transaction.type",
+            "operator": "==",
+            "value": "POINTS_TRANSFER"
+          },
+          {
+            "field": "device.associatedAccountsCount",
+            "operator": ">",
+            "value": 3
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "SET_RISK",
+          "value": "RED"
+        },
+        {
+          "type": "LOG"
+        },
+        {
+          "type": "NOTIFY_SECURITY"
+        }
+      ]
+    },
+    {
+      "id": "HIGH_FREQUENCY_TRANSFERS_BURST",
+      "enabled": true,
+      "priority": 85,
+      "score": 40,
+      "conditions": {
+        "operator": "AND",
+        "rules": [
+          {
+            "field": "transaction.type",
+            "operator": "==",
+            "value": "POINTS_TRANSFER"
+          },
+          {
+            "field": "metrics.senderTransfersLast5Minutes",
+            "operator": ">",
+            "value": 3
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "CALL_AI"
+        },
+        {
+          "type": "LOG"
+        }
+      ]
+    },
+    {
+      "id": "CIRCULAR_OR_FARMING_NETWORK_DETECTED",
+      "enabled": true,
+      "priority": 90,
+      "score": 50,
+      "conditions": {
+        "operator": "OR",
+        "rules": [
+          {
+            "field": "graph.isReciprocalTransfer24h",
+            "operator": "==",
+            "value": true
+          },
+          {
+            "field": "metrics.receiverUniqueSendersLast1Hour",
+            "operator": ">",
+            "value": 5
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "SET_RISK",
+          "value": "BLUE"
+        },
+        {
+          "type": "CALL_AI"
+        }
+      ]
+    },
+    {
+      "id": "SENDER_RECEIVER_SAME_IP_NEW_DEVICE",
+      "enabled": true,
+      "priority": 70,
+      "score": 25,
+      "conditions": {
+        "operator": "AND",
+        "rules": [
+          {
+            "field": "transaction.type",
+            "operator": "==",
+            "value": "POINTS_TRANSFER"
+          },
+          {
+            "field": "sender.ip",
+            "operator": "==",
+            "value": "receiver.ip"
+          },
+          {
+            "field": "device.isNewForUser",
+            "operator": "==",
+            "value": true
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "SET_SCORE",
+          "value": 25
+        }
+      ]
+    }
+  ]
+}
