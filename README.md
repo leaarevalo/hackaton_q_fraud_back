@@ -5,7 +5,7 @@ Base MVP en Express.js para evaluar fraude en transferencias de puntos.
 ## Requisitos
 
 - Node.js 18+
-- Redis no es requerido para correr este MVP. El contexto se guarda en memoria por ahora.
+- Redis corriendo localmente si usas `CACHE_PROVIDER=redis`.
 
 ## Instalacion
 
@@ -16,6 +16,23 @@ npm run dev
 ```
 
 El servicio queda disponible en `http://localhost:3000`.
+
+## Configuracion Redis
+
+Por defecto `.env.example` usa:
+
+```bash
+CACHE_PROVIDER=redis
+REDIS_URL=redis://localhost:6379
+```
+
+Con Docker, una forma simple de levantar Redis es:
+
+```bash
+docker run --name qleap-redis -p 6379:6379 -d redis:7-alpine
+```
+
+Si quieres correr sin Redis, cambia `CACHE_PROVIDER=memory`.
 
 ## Endpoints
 
@@ -34,16 +51,20 @@ curl -X POST http://localhost:3000/api/v1/fraud/evaluate \
 ```
 
 Para probar la regla de rafaga, envia `examples/burst-yellow.json` varias veces cambiando `transaction.id`.
-La memoria del proceso cuenta las transferencias previas del mismo remitente en los ultimos 5 minutos.
+Redis cuenta las transferencias previas del mismo remitente en los ultimos 5 minutos.
 
 ## Estructura
 
 - `src/routes`: endpoints HTTP.
 - `src/services`: orquestacion de fraude, reglas, contexto e IA.
-- `src/repositories`: almacenamiento temporal en memoria. Aqui se puede cambiar a Redis despues.
+- `src/repositories`: almacenamiento de contexto en Redis o memoria segun `CACHE_PROVIDER`.
 - `config.json`: reglas, niveles de riesgo y configuracion del engine.
 - `examples`: payloads para probar casos del MVP.
 
-## Redis mas adelante
+## Claves Redis
 
-El MVP usa `CACHE_PROVIDER=memory`. Cuando Redis este instalado, se puede agregar un repositorio Redis manteniendo la misma interfaz de `src/repositories/context.repository.js`.
+El contexto se guarda por tenant en sorted sets con esta forma:
+
+```text
+qleap:fraud:{tenantId}:transfers
+```

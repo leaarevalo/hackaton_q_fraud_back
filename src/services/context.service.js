@@ -13,10 +13,12 @@ export async function enrichTransferContext(transfer) {
 
   const metrics = {
     senderTransfersLast5Minutes: await countSenderTransfersSince(
+      transfer.tenantId,
       transfer.sender.userId,
       new Date(now - FIVE_MINUTES_MS)
     ),
     receiverUniqueSendersLast1Hour: await countReceiverUniqueSendersSince(
+      transfer.tenantId,
       transfer.receiver.userId,
       new Date(now - ONE_HOUR_MS)
     )
@@ -24,6 +26,7 @@ export async function enrichTransferContext(transfer) {
 
   const graph = {
     isReciprocalTransfer24h: await hasReciprocalTransferSince(
+      transfer.tenantId,
       transfer.sender.userId,
       transfer.receiver.userId,
       new Date(now - TWENTY_FOUR_HOURS_MS)
