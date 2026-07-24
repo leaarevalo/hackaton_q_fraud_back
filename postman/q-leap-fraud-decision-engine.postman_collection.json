@@ -349,6 +349,59 @@
           }
         }
       ]
+    },
+    {
+      "name": "Audits - By User",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/fraud/audits/users/usr_burst_777?tenantId={{tenantId}}&role=sender&limit=20",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "fraud",
+            "audits",
+            "users",
+            "usr_burst_777"
+          ],
+          "query": [
+            {
+              "key": "tenantId",
+              "value": "{{tenantId}}"
+            },
+            {
+              "key": "role",
+              "value": "sender"
+            },
+            {
+              "key": "limit",
+              "value": "20"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('response has audits array', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.audits).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ]
     }
   ]
 }

@@ -47,6 +47,25 @@ GROQ_API_KEY=tu_api_key
 
 El proyecto usa el SDK `openai` en modo compatible con Groq. Si `GROQ_API_KEY` esta vacia o el proveedor falla, el MVP usa el analisis local de fallback.
 
+## Configuracion MongoDB para Auditoria
+
+La auditoria puede guardarse en MongoDB:
+
+```bash
+AUDIT_PROVIDER=mongodb
+MONGODB_URI=mongodb://localhost:27017
+MONGODB_DB_NAME=qleap_fraud
+MONGODB_AUDIT_COLLECTION=transaction_audits
+```
+
+Con Docker, una forma simple de levantar MongoDB es:
+
+```bash
+docker run --name qleap-mongo -p 27017:27017 -d mongo:7
+```
+
+Si MongoDB no esta disponible, el MVP usa memoria como fallback.
+
 ## Endpoints
 
 ### Healthcheck
@@ -66,11 +85,23 @@ curl -X POST http://localhost:3000/api/v1/fraud/evaluate \
 Para probar la regla de rafaga, envia `examples/burst-yellow.json` varias veces cambiando `transaction.id`.
 Redis cuenta las transferencias previas del mismo remitente en los ultimos 5 minutos.
 
+### Consultar auditoria por usuario
+
+```bash
+curl "http://localhost:3000/api/v1/fraud/audits/users/usr_burst_777?tenantId=qurable_loyalty&role=sender&limit=20"
+```
+
+Parametros opcionales:
+
+- `tenantId`: filtra por tenant.
+- `role`: `sender`, `receiver` o `any`.
+- `limit`: maximo 200, default 50.
+
 ## Estructura
 
 - `src/routes`: endpoints HTTP.
 - `src/services`: orquestacion de fraude, reglas, contexto e IA.
-- `src/repositories`: almacenamiento de contexto en Redis o memoria segun `CACHE_PROVIDER`.
+- `src/repositories`: almacenamiento de contexto en Redis y auditoria en MongoDB o memoria segun variables de entorno.
 - `config.json`: reglas, niveles de riesgo y configuracion del engine.
 - `examples`: payloads para probar casos del MVP.
 

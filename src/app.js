@@ -29,7 +29,8 @@ export function createApp() {
       status: 'ok',
       endpoints: {
         health: 'GET /health',
-        evaluateTransfer: 'POST /api/v1/fraud/evaluate'
+        evaluateTransfer: 'POST /api/v1/fraud/evaluate',
+        auditsByUser: 'GET /api/v1/fraud/audits/users/:userId'
       }
     });
   });
@@ -46,4 +47,3 @@ export function createApp() {
 
   return app;
 }
-
