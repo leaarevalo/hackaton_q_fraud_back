@@ -34,6 +34,19 @@ docker run --name qleap-redis -p 6379:6379 -d redis:7-alpine
 
 Si quieres correr sin Redis, cambia `CACHE_PROVIDER=memory`.
 
+## Configuracion IA con Groq
+
+La API key va solo en `.env`, que ya esta ignorado por git:
+
+```bash
+AI_ENABLED=true
+AI_BASE_URL=https://api.groq.com/openai/v1
+AI_MODEL=llama-3.3-70b-versatile
+GROQ_API_KEY=tu_api_key
+```
+
+El proyecto usa el SDK `openai` en modo compatible con Groq. Si `GROQ_API_KEY` esta vacia o el proveedor falla, el MVP usa el analisis local de fallback.
+
 ## Endpoints
 
 ### Healthcheck

@@ -68,7 +68,7 @@
       "YELLOW",
       "BLUE"
     ],
-    "model": "gpt-5.5",
+    "model": "llama-3.3-70b-versatile",
     "temperature": 0.1,
     "maxTokens": 800,
     "can": {

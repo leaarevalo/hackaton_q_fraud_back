@@ -1,3 +1,7 @@
+import OpenAI from 'openai';
+
+const DEFAULT_GROQ_BASE_URL = 'https://api.groq.com/openai/v1';
+
 export async function analyzeWithAi(context, ruleDecision, config) {
   if (process.env.AI_ENABLED === 'false') {
     return null;
@@ -18,6 +22,54 @@ export async function analyzeWithAi(context, ruleDecision, config) {
     };
   }
 
+  if (process.env.GROQ_API_KEY) {
+    try {
+      return await analyzeWithGroq(context, ruleDecision, config);
+    } catch (error) {
+      console.warn(`AI provider unavailable, using local fallback: ${error.message}`);
+    }
+  }
+
+  return analyzeWithLocalFallback(context, ruleDecision);
+}
+
+async function analyzeWithGroq(context, ruleDecision, config) {
+  const client = new OpenAI({
+    apiKey: process.env.GROQ_API_KEY,
+    baseURL: process.env.AI_BASE_URL || DEFAULT_GROQ_BASE_URL
+  });
+
+  const completion = await client.chat.completions.create({
+    model: process.env.AI_MODEL || config.ai.model,
+    temperature: Number(process.env.AI_TEMPERATURE || config.ai.temperature || 0.1),
+    messages: [
+      {
+        role: 'system',
+        content: buildSystemPrompt(config)
+      },
+      {
+        role: 'user',
+        content: JSON.stringify(buildAiPayload(context, ruleDecision), null, 2)
+      }
+    ],
+    response_format: { type: 'json_object' }
+  });
+
+  const rawContent = completion.choices[0]?.message?.content || '{}';
+  const parsed = JSON.parse(rawContent);
+  const riskLevel = normalizeRiskLevel(parsed.riskLevel, ruleDecision.riskLevel);
+
+  return {
+    model: completion.model,
+    riskLevel,
+    recommendedAction: actionForRiskLevel(riskLevel),
+    confidence: clampConfidence(parsed.confidenceScore ?? parsed.confidence),
+    reasoning: parsed.reasoning || 'La IA no entrego una justificacion explicita.',
+    suggestedRule: parsed.suggestedRule || parsed.suggestedRuleRecommendation || null
+  };
+}
+
+function analyzeWithLocalFallback(context, ruleDecision) {
   if (context.metrics.senderTransfersLast5Minutes > 3 && context.transaction.points > 10000) {
     return {
       model: 'local-mock',
@@ -37,4 +89,52 @@ export async function analyzeWithAi(context, ruleDecision, config) {
     reasoning: 'Analisis simulado para el MVP. Mantiene la decision del motor de reglas.',
     suggestedRule: 'Conectar un proveedor real de IA cuando exista historial suficiente.'
   };
+}
+
+function buildSystemPrompt(config) {
+  return [
+    ...config.ai.systemInstructions,
+    'Responde exclusivamente JSON valido.',
+    'Formato requerido: {"riskLevel":"GREEN|YELLOW|RED|BLUE","confidenceScore":0.0,"reasoning":"texto breve","suggestedRule":"texto o null"}.',
+    `Reglas que nunca puedes anular: ${config.ai.neverOverride.join(', ')}.`
+  ].join('\n');
+}
+
+function buildAiPayload(context, ruleDecision) {
+  return {
+    transaction: context.transaction,
+    sender: context.sender,
+    receiver: context.receiver,
+    device: context.device,
+    location: context.location,
+    metrics: context.metrics,
+    graph: context.graph,
+    ruleDecision
+  };
+}
+
+function normalizeRiskLevel(riskLevel, fallbackRiskLevel) {
+  const allowedRiskLevels = ['GREEN', 'YELLOW', 'RED', 'BLUE'];
+  return allowedRiskLevels.includes(riskLevel) ? riskLevel : fallbackRiskLevel;
+}
+
+function actionForRiskLevel(riskLevel) {
+  const actions = {
+    GREEN: 'APPROVE',
+    YELLOW: 'APPROVE_WITH_WARNING',
+    RED: 'REJECT',
+    BLUE: 'MANUAL_REVIEW'
+  };
+
+  return actions[riskLevel] || actions.YELLOW;
+}
+
+function clampConfidence(confidence) {
+  const numericConfidence = Number(confidence);
+
+  if (Number.isNaN(numericConfidence)) {
+    return 0.5;
+  }
+
+  return Math.min(1, Math.max(0, numericConfidence));
 }
