@@ -12,6 +12,12 @@ export async function analyzeWithAi(context, ruleDecision, config) {
   );
 
   if (criticalRuleMatched) {
+    console.info('[ai] critical rule matched, preserving rule decision', {
+      transactionId: context.transaction.id,
+      riskLevel: ruleDecision.riskLevel,
+      matchedRules: ruleDecision.matchedRules.map((rule) => rule.id)
+    });
+
     return {
       model: 'local-mock',
       riskLevel: ruleDecision.riskLevel,
@@ -26,21 +32,40 @@ export async function analyzeWithAi(context, ruleDecision, config) {
     try {
       return await analyzeWithGroq(context, ruleDecision, config);
     } catch (error) {
-      console.warn(`AI provider unavailable, using local fallback: ${error.message}`);
+      console.warn('[ai] provider unavailable, using local fallback', {
+        transactionId: context.transaction.id,
+        provider: 'groq',
+        error: error.message
+      });
     }
+  }
+
+  if (!process.env.GROQ_API_KEY) {
+    console.info('[ai] GROQ_API_KEY missing, using local fallback', {
+      transactionId: context.transaction.id
+    });
   }
 
   return analyzeWithLocalFallback(context, ruleDecision);
 }
 
 async function analyzeWithGroq(context, ruleDecision, config) {
+  const model = process.env.AI_MODEL || config.ai.model;
+  const startedAt = Date.now();
   const client = new OpenAI({
     apiKey: process.env.GROQ_API_KEY,
     baseURL: process.env.AI_BASE_URL || DEFAULT_GROQ_BASE_URL
   });
 
+  console.info('[ai] calling provider', {
+    transactionId: context.transaction.id,
+    provider: 'groq',
+    model,
+    baseURL: process.env.AI_BASE_URL || DEFAULT_GROQ_BASE_URL
+  });
+
   const completion = await client.chat.completions.create({
-    model: process.env.AI_MODEL || config.ai.model,
+    model,
     temperature: Number(process.env.AI_TEMPERATURE || config.ai.temperature || 0.1),
     messages: [
       {
@@ -58,12 +83,22 @@ async function analyzeWithGroq(context, ruleDecision, config) {
   const rawContent = completion.choices[0]?.message?.content || '{}';
   const parsed = JSON.parse(rawContent);
   const riskLevel = normalizeRiskLevel(parsed.riskLevel, ruleDecision.riskLevel);
+  const confidence = clampConfidence(parsed.confidenceScore ?? parsed.confidence);
+
+  console.info('[ai] provider response received', {
+    transactionId: context.transaction.id,
+    provider: 'groq',
+    model: completion.model,
+    riskLevel,
+    confidence,
+    durationMs: Date.now() - startedAt
+  });
 
   return {
     model: completion.model,
     riskLevel,
     recommendedAction: actionForRiskLevel(riskLevel),
-    confidence: clampConfidence(parsed.confidenceScore ?? parsed.confidence),
+    confidence,
     reasoning: parsed.reasoning || 'La IA no entrego una justificacion explicita.',
     suggestedRule: parsed.suggestedRule || parsed.suggestedRuleRecommendation || null
   };
@@ -71,6 +106,12 @@ async function analyzeWithGroq(context, ruleDecision, config) {
 
 function analyzeWithLocalFallback(context, ruleDecision) {
   if (context.metrics.senderTransfersLast5Minutes > 3 && context.transaction.points > 10000) {
+    console.info('[ai] local fallback decision', {
+      transactionId: context.transaction.id,
+      riskLevel: 'RED',
+      reason: 'burst_with_high_amount'
+    });
+
     return {
       model: 'local-mock',
       riskLevel: 'RED',
@@ -80,6 +121,12 @@ function analyzeWithLocalFallback(context, ruleDecision) {
       suggestedRule: 'Agregar umbral combinado de frecuencia y monto acumulado por ventana de 5 minutos.'
     };
   }
+
+  console.info('[ai] local fallback decision', {
+    transactionId: context.transaction.id,
+    riskLevel: ruleDecision.riskLevel,
+    reason: 'preserve_rule_decision'
+  });
 
   return {
     model: 'local-mock',
