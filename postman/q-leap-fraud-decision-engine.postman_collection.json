@@ -1,0 +1,407 @@
+{
+  "info": {
+    "_postman_id": "7d9795d1-5ba6-48e7-bc42-50f10152f022",
+    "name": "Q-Leap Fraud Decision Engine",
+    "description": "Collection de pruebas para el MVP Express.js del motor de fraude en transferencias de puntos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:3000"
+    },
+    {
+      "key": "tenantId",
+      "value": "qurable_loyalty"
+    }
+  ],
+  "item": [
+    {
+      "name": "Healthcheck",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('service is healthy', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.status).to.eql('ok');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Evaluate - Regular Transfer GREEN",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"scope\": \"POINTS_TRANSFER\",\n  \"transaction\": {\n    \"id\": \"tx_regular_{{$timestamp}}\",\n    \"timestamp\": \"2026-07-24T13:10:00Z\",\n    \"points\": 500,\n    \"currency\": \"LOYALTY_PTS\"\n  },\n  \"sender\": {\n    \"userId\": \"usr_sender_old\",\n    \"accountCreatedAt\": \"2025-01-01T10:00:00Z\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"receiver\": {\n    \"userId\": \"usr_friend_999\",\n    \"ip\": \"200.45.99.10\"\n  },\n  \"device\": {\n    \"fingerprint\": \"fp_trusted_001\",\n    \"associatedAccountsCount\": 1,\n    \"isNewForUser\": false,\n    \"platform\": \"iOS\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/fraud/evaluate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "fraud",
+            "evaluate"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('decision is GREEN', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.decision.riskLevel).to.eql('GREEN');",
+              "  pm.expect(body.decision.recommendedAction).to.eql('APPROVE');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Evaluate - Account Farming RED",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"scope\": \"POINTS_TRANSFER\",\n  \"transaction\": {\n    \"id\": \"tx_farming_{{$timestamp}}\",\n    \"timestamp\": \"2026-07-24T13:12:00Z\",\n    \"points\": 5000,\n    \"currency\": \"LOYALTY_PTS\"\n  },\n  \"sender\": {\n    \"userId\": \"usr_mule_123\",\n    \"accountAgeMinutes\": 45,\n    \"ip\": \"181.44.12.90\"\n  },\n  \"receiver\": {\n    \"userId\": \"usr_receiver_999\",\n    \"ip\": \"181.44.12.90\"\n  },\n  \"device\": {\n    \"fingerprint\": \"fp_shared_abc\",\n    \"associatedAccountsCount\": 5,\n    \"isNewForUser\": true,\n    \"platform\": \"Android\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/fraud/evaluate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "fraud",
+            "evaluate"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('decision is RED', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.decision.riskLevel).to.eql('RED');",
+              "  pm.expect(body.decision.recommendedAction).to.eql('REJECT');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Burst Sequence - Run Folder To Trigger YELLOW",
+      "description": "Ejecuta esta carpeta completa en Collection Runner. La quinta transferencia deberia activar HIGH_FREQUENCY_TRANSFERS_BURST.",
+      "item": [
+        {
+          "name": "Burst 1 - Seed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"scope\": \"POINTS_TRANSFER\",\n  \"transaction\": {\n    \"id\": \"tx_burst_1_{{$timestamp}}\",\n    \"timestamp\": \"2026-07-24T13:15:00Z\",\n    \"points\": 2500,\n    \"currency\": \"LOYALTY_PTS\"\n  },\n  \"sender\": {\n    \"userId\": \"usr_burst_777\",\n    \"accountCreatedAt\": \"2026-07-20T12:00:00Z\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"receiver\": {\n    \"userId\": \"usr_beta_999\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"device\": {\n    \"fingerprint\": \"fp_burst_777\",\n    \"associatedAccountsCount\": 1,\n    \"isNewForUser\": false,\n    \"platform\": \"Android\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fraud/evaluate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fraud",
+                "evaluate"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Burst 2 - Seed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"scope\": \"POINTS_TRANSFER\",\n  \"transaction\": {\n    \"id\": \"tx_burst_2_{{$timestamp}}\",\n    \"timestamp\": \"2026-07-24T13:15:10Z\",\n    \"points\": 2500,\n    \"currency\": \"LOYALTY_PTS\"\n  },\n  \"sender\": {\n    \"userId\": \"usr_burst_777\",\n    \"accountCreatedAt\": \"2026-07-20T12:00:00Z\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"receiver\": {\n    \"userId\": \"usr_beta_999\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"device\": {\n    \"fingerprint\": \"fp_burst_777\",\n    \"associatedAccountsCount\": 1,\n    \"isNewForUser\": false,\n    \"platform\": \"Android\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fraud/evaluate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fraud",
+                "evaluate"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Burst 3 - Seed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"scope\": \"POINTS_TRANSFER\",\n  \"transaction\": {\n    \"id\": \"tx_burst_3_{{$timestamp}}\",\n    \"timestamp\": \"2026-07-24T13:15:20Z\",\n    \"points\": 2500,\n    \"currency\": \"LOYALTY_PTS\"\n  },\n  \"sender\": {\n    \"userId\": \"usr_burst_777\",\n    \"accountCreatedAt\": \"2026-07-20T12:00:00Z\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"receiver\": {\n    \"userId\": \"usr_beta_999\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"device\": {\n    \"fingerprint\": \"fp_burst_777\",\n    \"associatedAccountsCount\": 1,\n    \"isNewForUser\": false,\n    \"platform\": \"Android\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fraud/evaluate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fraud",
+                "evaluate"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Burst 4 - Seed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"scope\": \"POINTS_TRANSFER\",\n  \"transaction\": {\n    \"id\": \"tx_burst_4_{{$timestamp}}\",\n    \"timestamp\": \"2026-07-24T13:15:30Z\",\n    \"points\": 2500,\n    \"currency\": \"LOYALTY_PTS\"\n  },\n  \"sender\": {\n    \"userId\": \"usr_burst_777\",\n    \"accountCreatedAt\": \"2026-07-20T12:00:00Z\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"receiver\": {\n    \"userId\": \"usr_beta_999\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"device\": {\n    \"fingerprint\": \"fp_burst_777\",\n    \"associatedAccountsCount\": 1,\n    \"isNewForUser\": false,\n    \"platform\": \"Android\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fraud/evaluate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fraud",
+                "evaluate"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Burst 5 - Expect YELLOW",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"scope\": \"POINTS_TRANSFER\",\n  \"transaction\": {\n    \"id\": \"tx_burst_5_{{$timestamp}}\",\n    \"timestamp\": \"2026-07-24T13:15:40Z\",\n    \"points\": 2500,\n    \"currency\": \"LOYALTY_PTS\"\n  },\n  \"sender\": {\n    \"userId\": \"usr_burst_777\",\n    \"accountCreatedAt\": \"2026-07-20T12:00:00Z\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"receiver\": {\n    \"userId\": \"usr_beta_999\",\n    \"ip\": \"200.45.12.5\"\n  },\n  \"device\": {\n    \"fingerprint\": \"fp_burst_777\",\n    \"associatedAccountsCount\": 1,\n    \"isNewForUser\": false,\n    \"platform\": \"Android\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/fraud/evaluate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "fraud",
+                "evaluate"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('decision is YELLOW', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.decision.riskLevel).to.eql('YELLOW');",
+                  "  pm.expect(body.decision.aiInvoked).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Evaluate - Validation Error",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tenantId\": \"{{tenantId}}\",\n  \"scope\": \"POINTS_TRANSFER\",\n  \"transaction\": {\n    \"id\": \"tx_invalid_{{$timestamp}}\",\n    \"points\": 0\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/fraud/evaluate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "fraud",
+            "evaluate"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 400', function () {",
+              "  pm.response.to.have.status(400);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audits - By User",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/fraud/audits/users/usr_burst_777?tenantId={{tenantId}}&role=sender&limit=20",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "fraud",
+            "audits",
+            "users",
+            "usr_burst_777"
+          ],
+          "query": [
+            {
+              "key": "tenantId",
+              "value": "{{tenantId}}"
+            },
+            {
+              "key": "role",
+              "value": "sender"
+            },
+            {
+              "key": "limit",
+              "value": "20"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('response has audits array', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.audits).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

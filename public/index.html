@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Q-Sentinel – Fraud Decision Engine Pitch Deck</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            dark: {
+              base: '#080c14',
+              card: '#111827',
+              border: '#1f2937'
+            },
+            brand: {
+              neon: '#10b981', // emerald
+              electric: '#3b82f6', // blue
+              violet: '#8b5cf6', // purple
+              rose: '#f43f5e', // red
+              amber: '#f59e0b', // yellow
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #080c14;
+      color: #e5e7eb;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+    .slide-container {
+      perspective: 1000px;
+    }
+    .slide {
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      transform: scale(0.95) translateZ(-50px);
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+    }
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateZ(0);
+      pointer-events: auto;
+    }
+    .glass {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glow-emerald:hover {
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .glow-blue:hover {
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+    .glow-violet:hover {
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.15);
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+    .text-glow-neon {
+      text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    }
+    .text-glow-electric {
+      text-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+    }
+  </style>
+</head>
+<body class="h-screen w-screen flex flex-col justify-between selection:bg-brand-neon selection:text-black">
+
+  <!-- Top Progress Bar -->
+  <div class="w-full h-1.5 bg-dark-border relative z-50">
+    <div id="progress-bar" class="h-full bg-gradient-to-r from-brand-electric via-brand-violet to-brand-neon transition-all duration-300" style="width: 14.28%;"></div>
+  </div>
+
+  <!-- Main Presentation Area -->
+  <main class="flex-grow relative slide-container w-full max-w-7xl mx-auto px-6 py-8 flex items-center justify-center">
+
+    <!-- SLIDE 1: PORTADA & HOOK -->
+    <section id="slide-1" class="slide active flex flex-col justify-center items-center text-center">
+      <div class="space-y-6 max-w-4xl">
+        <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-brand-neon/10 text-brand-neon border border-brand-neon/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+          🚀 Hackathon Qurable 2026
+        </span>
+        <h1 class="text-6xl md:text-8xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
+          Q-Sentinel
+        </h1>
+        <div class="h-1 w-24 bg-gradient-to-r from-brand-electric to-brand-neon mx-auto rounded-full"></div>
+        <h2 class="text-2xl md:text-3xl font-medium text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          Fraud Decision Engine
+        </h2>
+        <p class="text-lg md:text-xl text-slate-400 max-w-xl mx-auto">
+          La infraestructura de prevención de fraude en tiempo real guiada por IA para programas de Loyalty.
+        </p>
+        <div class="pt-8">
+          <div class="glass px-6 py-4 rounded-2xl max-w-md mx-auto border border-white/5 shadow-xl">
+            <span class="text-sm font-semibold text-brand-neon uppercase tracking-widest text-glow-neon block mb-1">Impact Statement</span>
+            <p class="text-base text-slate-200 italic font-medium">"El fraude no avisa. Tu motor tampoco debería dudar."</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: EL PROBLEMA OCULTO -->
+    <section id="slide-2" class="slide flex flex-col justify-center">
+      <div class="w-full space-y-8">
+        <div class="text-center md:text-left space-y-2">
+          <span class="text-brand-rose font-semibold tracking-widest uppercase text-sm">El Diagnóstico</span>
+          <h2 class="text-4xl md:text-5xl font-extrabold text-white">El Dolor Oculto en Loyalty</h2>
+          <p class="text-slate-400 max-w-2xl">Los programas de fidelización pierden miles de millones al año debido a vulnerabilidades de seguridad que las plataformas tradicionales no detectan.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="glass p-8 rounded-2xl border border-white/5 transition-all duration-300 glow-rose hover:border-brand-rose/30">
+            <div class="h-12 w-12 rounded-xl bg-brand-rose/10 flex items-center justify-center border border-brand-rose/20 mb-6">
+              <svg class="h-6 w-6 text-brand-rose" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Account Takeover (ATO) & Transferencias Masivas</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              Robo de cuentas seguido de transferencias inmediatas de saldos de puntos hacia cuentas mulas para su posterior liquidación.
+            </p>
+          </div>
+
+          <div class="glass p-8 rounded-2xl border border-white/5 transition-all duration-300 glow-rose hover:border-brand-rose/30">
+            <div class="h-12 w-12 rounded-xl bg-brand-rose/10 flex items-center justify-center border border-brand-rose/20 mb-6">
+              <svg class="h-6 w-6 text-brand-rose" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Redes de Botnets & Dispositivos Emulados</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              Redes automatizadas y emuladores con múltiples cuentas por dispositivo cosechando puntos promocionales de forma masiva.
+            </p>
+          </div>
+
+          <div class="glass p-8 rounded-2xl border border-white/5 transition-all duration-300 glow-rose hover:border-brand-rose/30">
+            <div class="h-12 w-12 rounded-xl bg-brand-rose/10 flex items-center justify-center border border-brand-rose/20 mb-6">
+              <svg class="h-6 w-6 text-brand-rose" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Reglas Rígidas Tradicionales</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              Las políticas fijas tradicionales generan falsos positivos masivos, bloqueando transacciones legítimas y arruinando la experiencia VIP.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: LA SOLUCIÓN: Q-SENTINEL ENGINE -->
+    <section id="slide-3" class="slide flex flex-col justify-center">
+      <div class="w-full space-y-8">
+        <div class="text-center md:text-left space-y-2">
+          <span class="text-brand-neon font-semibold tracking-widest uppercase text-sm">La Propuesta</span>
+          <h2 class="text-4xl md:text-5xl font-extrabold text-white">La Solución: Q-Sentinel Engine</h2>
+          <p class="text-slate-400 max-w-2xl">Un motor desacoplado, multi-tenant, en tiempo real y guiado por IA para un control absoluto sobre el riesgo.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="glass p-6 rounded-2xl border border-white/5 transition-all duration-300 glow-emerald">
+            <span class="text-xs font-mono font-bold text-brand-neon bg-brand-neon/10 px-2.5 py-1 rounded-md border border-brand-neon/20 inline-block mb-4">⚡ VELOCIDAD</span>
+            <h3 class="text-lg font-bold text-white mb-2">Evaluaciones < 50ms</h3>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              Arquitectura optimizada sobre Redis en memoria + motor de reglas dinámico que elimina latencias operativas.
+            </p>
+          </div>
+
+          <div class="glass p-6 rounded-2xl border border-white/5 transition-all duration-300 glow-blue">
+            <span class="text-xs font-mono font-bold text-brand-electric bg-brand-electric/10 px-2.5 py-1 rounded-md border border-brand-electric/20 inline-block mb-4">📱 DISPOSITIVOS</span>
+            <h3 class="text-lg font-bold text-white mb-2">Device Fingerprint</h3>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              Identificación precisa de dispositivos para detectar emuladores y comportamiento multicuenta en tiempo real.
+            </p>
+          </div>
+
+          <div class="glass p-6 rounded-2xl border border-white/5 transition-all duration-300 glow-violet">
+            <span class="text-xs font-mono font-bold text-brand-violet bg-brand-violet/10 px-2.5 py-1 rounded-md border border-brand-violet/20 inline-block mb-4">🤖 MODELO HÍBRIDO</span>
+            <h3 class="text-lg font-bold text-white mb-2">AI Orchestrator (XAI)</h3>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              Modelos de Explicabilidad (XAI) aplicados a zonas de sospecha para evitar falsos positivos y transparentar las decisiones.
+            </p>
+          </div>
+
+          <div class="glass p-6 rounded-2xl border border-white/5 transition-all duration-300 glow-emerald">
+            <span class="text-xs font-mono font-bold text-brand-neon bg-brand-neon/10 px-2.5 py-1 rounded-md border border-brand-neon/20 inline-block mb-4">📊 AUDITORÍA</span>
+            <h3 class="text-lg font-bold text-white mb-2">Auditability & Graphs</h3>
+            <p class="text-slate-400 text-xs leading-relaxed">
+              Monitoreo, registro de auditoría completo y análisis de red para identificar transferencias circulares o estructuradas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: ALCANCE 1 Y ENTORNO EN VIVO (PLAYGROUND DE CASOS) -->
+    <section id="slide-4" class="slide flex flex-col justify-center">
+      <div class="w-full space-y-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div class="space-y-1">
+            <span class="text-brand-electric font-semibold tracking-widest uppercase text-sm">Escenarios Reales</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-white">Evaluación de Casos en Tiempo Real</h2>
+          </div>
+          
+          <!-- Selector de Casos -->
+          <div class="flex gap-2 mt-3 md:mt-0">
+            <button onclick="showCase(1)" id="tab-btn-1" class="px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-brand-neon/20 text-brand-neon border-brand-neon/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+              Caso 1: Green
+            </button>
+            <button onclick="showCase(2)" id="tab-btn-2" class="px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white">
+              Caso 2: Yellow
+            </button>
+            <button onclick="showCase(3)" id="tab-btn-3" class="px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white">
+              Caso 3: Red
+            </button>
+          </div>
+        </div>
+
+        <div class="max-w-2xl mx-auto w-full relative h-[420px]">
+          
+          <!-- Caso 1: Green Card -->
+          <div id="case-card-1" class="absolute inset-0 glass p-6 rounded-2xl border border-brand-neon/25 transition-all duration-500 shadow-[0_0_20px_rgba(16,185,129,0.1)] flex flex-col justify-between opacity-100 scale-100 z-10">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-brand-neon/15 text-brand-neon border border-brand-neon/30">
+                  APROBADA (GREEN)
+                </span>
+                <span class="font-mono text-xs text-brand-neon font-bold">Score: 04/100</span>
+              </div>
+              
+              <div class="space-y-4">
+                <div class="bg-[#080c14] border border-white/5 rounded-xl p-3.5 space-y-2 text-sm">
+                  <div class="flex justify-between"><span class="text-slate-400">Origen (Sender):</span> <span class="text-white font-medium">Leandro Arevalo</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Destino (Receiver):</span> <span class="text-white font-medium">Salvador Woinilwicz</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Transferencia:</span> <span class="text-brand-neon font-bold">1,500 puntos</span></div>
+                </div>
+
+                <div class="space-y-1">
+                  <h4 class="font-bold text-slate-300 uppercase tracking-wider text-[9px]">Reglas Disparadas</h4>
+                  <div class="bg-white/5 border border-white/10 rounded px-2.5 py-2 text-xs text-slate-400">
+                    <span class="italic">Ninguna alerta de riesgo. Historial recurrente limpio.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-white/5 space-y-2">
+              <h4 class="font-bold text-brand-neon uppercase tracking-wider text-xs flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 rounded-full bg-brand-neon"></span>
+                Explicabilidad IA (XAI)
+              </h4>
+              <div class="bg-[#080c14]/80 border border-white/10 rounded-xl p-4 text-base font-medium italic text-slate-100 leading-relaxed min-h-[90px] flex items-center">
+                <span>"Transacción aprobada automáticamente. Se detectó un historial común de interacciones frecuentes y seguras entre ambos usuarios. Claramente se llevan bien y operan sin riesgo alguno."</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Caso 2: Yellow Card -->
+          <div id="case-card-2" class="absolute inset-0 glass p-6 rounded-2xl border border-brand-amber/25 transition-all duration-500 shadow-[0_0_20px_rgba(245,158,11,0.1)] flex flex-col justify-between opacity-0 scale-95 pointer-events-none z-0">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-brand-amber/15 text-brand-amber border border-brand-amber/30">
+                  REVISIÓN MANUAL (YELLOW)
+                </span>
+                <span class="font-mono text-xs text-brand-amber font-bold">Score: 48/100</span>
+              </div>
+              
+              <div class="space-y-4">
+                <div class="bg-[#080c14] border border-white/5 rounded-xl p-3.5 space-y-2 text-sm">
+                  <div class="flex justify-between"><span class="text-slate-400">Origen (Sender):</span> <span class="text-white font-medium">Leandro Arevalo</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Destino (Receiver):</span> <span class="text-white font-medium">Alexander Silva (TL)</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Transferencia:</span> <span class="text-brand-amber font-bold">4,200 puntos</span></div>
+                </div>
+
+                <div class="space-y-1">
+                  <h4 class="font-bold text-slate-300 uppercase tracking-wider text-[9px]">Reglas Disparadas</h4>
+                  <div class="flex justify-between items-center bg-brand-amber/5 border border-brand-amber/20 rounded px-2.5 py-2 text-xs">
+                    <span class="font-mono text-white font-bold">BURST_TRANSFER_SAME_USER</span>
+                    <span class="text-brand-amber font-bold">+40 pts</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-white/5 space-y-2">
+              <h4 class="font-bold text-brand-amber uppercase tracking-wider text-xs flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 rounded-full bg-brand-amber animate-pulse"></span>
+                Explicabilidad IA (XAI)
+              </h4>
+              <div class="bg-[#080c14]/80 border border-white/10 rounded-xl p-4 text-base font-medium italic text-slate-100 leading-relaxed min-h-[90px] flex items-center">
+                <span>"Segunda transferencia en muy poco tiempo hacia su TL. Requiere revisión manual de Mati Blayer para verificar que Leandro no esté intentando comprar su aprobación en las pull requests o sobornarlo con puntos."</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Caso 3: Red Card -->
+          <div id="case-card-3" class="absolute inset-0 glass p-6 rounded-2xl border border-brand-rose/25 transition-all duration-500 shadow-[0_0_20px_rgba(244,63,94,0.1)] flex flex-col justify-between opacity-0 scale-95 pointer-events-none z-0">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest bg-brand-rose/15 text-brand-rose border border-brand-rose/30">
+                  BLOQUEADA (RED)
+                </span>
+                <span class="font-mono text-xs text-brand-rose font-bold">Score: 98/100</span>
+              </div>
+              
+              <div class="space-y-4">
+                <div class="bg-[#080c14] border border-white/5 rounded-xl p-3.5 space-y-2 text-sm">
+                  <div class="flex justify-between"><span class="text-slate-400">Origen (Sender):</span> <span class="text-white font-medium">Leandro Arevalo</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Destino (Receiver):</span> <span class="text-white font-medium">Federico Karra</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400">Transferencia:</span> <span class="text-brand-rose font-bold">15,000 puntos</span></div>
+                </div>
+
+                <div class="space-y-1">
+                  <h4 class="font-bold text-slate-300 uppercase tracking-wider text-[9px]">Reglas Disparadas</h4>
+                  <div class="flex justify-between items-center bg-brand-rose/5 border border-brand-rose/20 rounded px-2.5 py-2 text-xs">
+                    <span class="font-mono text-white font-bold">CONSECUTIVE_TRANSFER_LIMIT</span>
+                    <span class="text-brand-rose font-bold">+95 pts</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-white/5 space-y-2">
+              <h4 class="font-bold text-brand-rose uppercase tracking-wider text-xs flex items-center gap-1.5">
+                <span class="h-1.5 w-1.5 rounded-full bg-brand-rose animate-pulse"></span>
+                Explicabilidad IA (XAI)
+              </h4>
+              <div class="bg-[#080c14]/80 border border-white/10 rounded-xl p-4 text-base font-medium italic text-slate-100 leading-relaxed min-h-[90px] flex items-center">
+                <span>"Tercera transferencia consecutiva. Es altamente probable que se trate de un intercambio en el mercado negro por una docena de empanadas. Karra figura como sospechoso crítico de liderar el tráfico ilegal de estas delicias."</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: ARQUITECTURA TECNOLÓGICA & EXTENSIBILIDAD -->
+    <section id="slide-5" class="slide flex flex-col justify-center">
+      <div class="w-full space-y-6">
+        <div class="text-center md:text-left space-y-2">
+          <span class="text-brand-violet font-semibold tracking-widest uppercase text-sm">Arquitectura</span>
+          <h2 class="text-4xl md:text-5xl font-extrabold text-white">Arquitectura Tecnológica</h2>
+          <p class="text-slate-400 max-w-2xl text-sm">Infraestructura desacoplada e inteligente diseñada para procesar evaluaciones en tiempo récord.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 glass p-6 rounded-2xl border border-white/5 flex flex-col justify-center">
+            <!-- Diagram SVG/CSS styling -->
+            <div class="grid grid-cols-5 gap-2 items-center text-center font-mono text-[10px] font-bold text-white relative">
+              <div class="p-3 bg-brand-electric/10 border border-brand-electric/30 rounded-xl">
+                <div class="text-brand-electric text-sm mb-1">📱</div>
+                Client App
+              </div>
+              <div class="text-brand-violet text-lg font-bold">→</div>
+              <div class="p-3 bg-brand-violet/10 border border-brand-violet/30 rounded-xl relative group">
+                <div class="text-brand-violet text-sm mb-1">🛡️</div>
+                API Gateway
+                <span class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-[8px] bg-brand-violet text-black font-extrabold px-1 rounded">Express</span>
+              </div>
+              <div class="text-brand-violet text-lg font-bold">→</div>
+              <div class="p-3 bg-brand-neon/10 border border-brand-neon/30 rounded-xl relative">
+                <div class="text-brand-neon text-sm mb-1">⚡</div>
+                Rules Engine
+                <span class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-[8px] bg-brand-neon text-black font-extrabold px-1 rounded">Redis / Memory</span>
+              </div>
+            </div>
+            
+            <div class="flex justify-center my-2 text-brand-violet font-bold text-lg">↓</div>
+            
+            <div class="grid grid-cols-5 gap-2 items-center text-center font-mono text-[10px] font-bold text-white relative">
+              <div class="p-3 bg-brand-amber/15 border border-brand-amber/30 rounded-xl col-start-3 relative">
+                <div class="text-brand-amber text-sm mb-1">🤖</div>
+                AI Orchestrator
+                <span class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 text-[8px] bg-brand-amber text-black font-extrabold px-1 rounded">Groq / Llama3</span>
+              </div>
+              <div class="text-brand-neon text-lg font-bold">→</div>
+              <div class="p-3 bg-white/5 border border-white/10 rounded-xl">
+                <div class="text-white text-sm mb-1">✅</div>
+                Decision Score
+              </div>
+            </div>
+          </div>
+
+          <div class="glass p-6 rounded-2xl border border-white/5 flex flex-col justify-between">
+            <h3 class="text-lg font-bold text-white mb-2">Escalabilidad & Config</h3>
+            <p class="text-slate-400 text-xs leading-relaxed mb-4">
+              El motor es extensible a todo el flujo de Loyalty: Canjes, cargas y promociones. 
+            </p>
+            <div class="space-y-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-brand-electric/10 text-brand-electric border border-brand-electric/20">
+                ✔️ API-First (JSON Config)
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-brand-neon/10 text-brand-neon border border-brand-neon/20">
+                ✔️ Scope-Flexible Integration
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold bg-brand-violet/10 text-brand-violet border border-brand-violet/20">
+                ✔️ Multi-Tenant Architecture
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: EL PODER DE LA IA & EXPLICABILIDAD (XAI) -->
+    <section id="slide-6" class="slide flex flex-col justify-center">
+      <div class="w-full space-y-6">
+        <div class="text-center md:text-left space-y-2">
+          <span class="text-brand-violet font-semibold tracking-widest uppercase text-sm">Seguridad Inteligente</span>
+          <h2 class="text-4xl md:text-5xl font-extrabold text-white">El Poder de la IA & Explicabilidad (XAI)</h2>
+          <p class="text-slate-400 max-w-2xl text-sm">Cómo orquestamos la IA de forma segura, acotada y transparente para erradicar falsos positivos.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="glass p-6 rounded-2xl border border-white/5 space-y-4">
+            <div class="flex gap-4">
+              <div class="h-10 w-10 rounded-lg bg-brand-violet/10 flex items-center justify-center border border-brand-violet/20 shrink-0">
+                <svg class="h-5 w-5 text-brand-violet" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-white">Acción Condicional</h3>
+                <p class="text-slate-400 text-xs leading-relaxed mt-1">
+                  La IA sólo interviene en casos dudosos (Yellow/Blue). Nunca invalida decisiones basadas en listas negras fijas o políticas críticas (Red).
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-4">
+              <div class="h-10 w-10 rounded-lg bg-brand-neon/10 flex items-center justify-center border border-brand-neon/20 shrink-0">
+                <svg class="h-5 w-5 text-brand-neon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-white">Explicabilidad Nativa (XAI)</h3>
+                <p class="text-slate-400 text-xs leading-relaxed mt-1">
+                  Obtención de justificaciones lógicas detalladas en lenguaje natural, facilitando el análisis y la toma de decisiones informadas para el equipo de seguridad.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass p-6 rounded-2xl border border-white/5 flex flex-col">
+            <div class="flex items-center justify-between border-b border-white/5 pb-3 mb-3">
+              <span class="text-xs font-mono font-bold text-brand-violet uppercase">Ejemplo Output Consola JSON (XAI)</span>
+              <span class="h-2 w-2 rounded-full bg-brand-violet animate-pulse"></span>
+            </div>
+            <pre class="bg-[#080c14] border border-white/10 rounded-xl p-4 font-mono text-[10px] text-slate-400 overflow-x-auto flex-grow leading-relaxed">
+{
+  <span class="text-brand-electric">"decision"</span>: <span class="text-brand-neon">"APPROVE_WITH_WARNING"</span>,
+  <span class="text-brand-electric">"confidence"</span>: <span class="text-brand-neon">0.88</span>,
+  <span class="text-brand-electric">"reasoning"</span>: <span class="text-slate-300">"El patrón de ráfaga muestra transferencias consistentes a destinatarios de confianza con huella digital verificada."</span>,
+  <span class="text-brand-electric">"action_item"</span>: <span class="text-brand-amber">"Monitorear proximidad de IP y huella en siguientes operaciones."</span>
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: VISION DE FUTURO & CIERRE -->
+    <section id="slide-7" class="slide flex flex-col justify-center items-center text-center">
+      <div class="space-y-6 max-w-4xl w-full">
+        <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase bg-brand-rose/10 text-brand-rose border border-brand-rose/20">
+          ⚠️ Plan de Contingencia & Cierre
+        </span>
+        <h2 class="text-5xl md:text-6xl font-extrabold text-white">Q-Sentinel: Sin Fraude, Más Empanadas</h2>
+        <p class="text-slate-300 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+          "Hoy: Transferencias de Puntos. Mañana: Control absoluto sobre el tráfico clandestino de empanadas de carne cortada a cuchillo en el ecosistema Loyalty de Qurable."
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto pt-6">
+          <div class="glass p-6 rounded-2xl border border-brand-neon/20 flex flex-col justify-center min-h-[120px]">
+            <h4 class="text-3xl font-black text-brand-neon font-mono text-glow-neon">0%</h4>
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-bold mt-1">Fraude de empanadas tolerado</p>
+          </div>
+          <div class="glass p-6 rounded-2xl border border-brand-rose/20 flex flex-col justify-center min-h-[120px]">
+            <h4 class="text-3xl font-black text-brand-rose font-mono text-glow-rose">git push --force</h4>
+            <p class="text-xs uppercase tracking-wider text-slate-400 font-bold mt-1">al main para borrar todo si no ganamos la hackathon</p>
+          </div>
+        </div>
+
+        <div class="pt-8">
+          <h3 class="text-2xl font-extrabold text-white">¡Muchas gracias!</h3>
+          <p class="text-sm text-slate-500 mt-2 font-mono">Q-Sentinel Engine • Hackathon Qurable 2026</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation Panel -->
+  <footer class="w-full max-w-7xl mx-auto px-6 py-4 flex items-center justify-between border-t border-white/5 relative z-50">
+    <div class="text-xs text-slate-500 font-mono">
+      Q-Sentinel Engine
+    </div>
+    
+    <div class="flex items-center gap-4">
+      <button onclick="prevSlide()" class="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-white transition-all text-slate-400" aria-label="Slide anterior">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <span id="slide-indicator" class="text-xs font-mono font-semibold text-slate-400">
+        Slide 1 de 7
+      </span>
+      <button onclick="nextSlide()" class="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:text-white transition-all text-slate-400" aria-label="Siguiente slide">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <div class="text-xs text-slate-500 font-mono hidden md:block">
+      Presiona <span class="bg-white/10 px-1.5 py-0.5 rounded text-slate-300">←</span> / <span class="bg-white/10 px-1.5 py-0.5 rounded text-slate-300">→</span> para navegar
+    </div>
+  </footer>
+
+  <script>
+    // Navigation Logic
+    let currentSlide = 1;
+    const totalSlides = 7;
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+
+      document.querySelector(`#slide-${currentSlide}`).classList.remove('active');
+      document.querySelector(`#slide-${index}`).classList.add('active');
+
+      currentSlide = index;
+
+      // Update Slide Indicator & Progress Bar
+      document.getElementById('slide-indicator').textContent = `Slide ${currentSlide} de ${totalSlides}`;
+      document.getElementById('progress-bar').style.width = `${(currentSlide / totalSlides) * 100}%`;
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) showSlide(currentSlide - 1);
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) showSlide(currentSlide + 1);
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        // Prevent action if focusing input
+        if (document.activeElement.tagName !== 'INPUT') nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        if (document.activeElement.tagName !== 'INPUT') prevSlide();
+      }
+    });
+
+    // Touch Swipe Navigation for mobile
+    let touchStartX = 0;
+    window.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+    window.addEventListener('touchend', (e) => {
+      let touchEndX = e.changedTouches[0].screenX;
+      if (touchEndX < touchStartX - 60) nextSlide();
+      if (touchEndX > touchStartX + 60) prevSlide();
+    });
+
+    // Toggle Case Cards in Slide 4
+    function showCase(num) {
+      for (let i = 1; i <= 3; i++) {
+        const card = document.getElementById(`case-card-${i}`);
+        const btn = document.getElementById(`tab-btn-${i}`);
+        if (i === num) {
+          card.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'z-0');
+          card.classList.add('opacity-100', 'scale-100', 'z-10');
+          
+          if (i === 1) {
+            btn.className = "px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-brand-neon/20 text-brand-neon border-brand-neon/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]";
+          } else if (i === 2) {
+            btn.className = "px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-brand-amber/20 text-brand-amber border-brand-amber/30 shadow-[0_0_15px_rgba(245,158,11,0.15)]";
+          } else if (i === 3) {
+            btn.className = "px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-brand-rose/20 text-brand-rose border-brand-rose/30 shadow-[0_0_15px_rgba(244,63,94,0.15)]";
+          }
+        } else {
+          card.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'z-0');
+          card.classList.remove('opacity-100', 'scale-100', 'z-10');
+          btn.className = "px-4 py-2 rounded-xl text-xs font-bold border transition-all duration-300 bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white";
+        }
+      }
+    }
+  </script>
+</body>
+</html>
