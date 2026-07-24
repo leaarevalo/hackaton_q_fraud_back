@@ -1,0 +1,25 @@
+{
+  "tenantId": "qurable_loyalty",
+  "scope": "POINTS_TRANSFER",
+  "transaction": {
+    "id": "tx_regular_001",
+    "timestamp": "2026-07-24T13:10:00Z",
+    "points": 500,
+    "currency": "LOYALTY_PTS"
+  },
+  "sender": {
+    "userId": "usr_sender_old",
+    "accountCreatedAt": "2025-01-01T10:00:00Z",
+    "ip": "200.45.12.5"
+  },
+  "receiver": {
+    "userId": "usr_friend_999",
+    "ip": "200.45.99.10"
+  },
+  "device": {
+    "fingerprint": "fp_trusted_001",
+    "associatedAccountsCount": 1,
+    "isNewForUser": false,
+    "platform": "iOS"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "tenantId": "qurable_loyalty",
+  "scope": "POINTS_TRANSFER",
+  "transaction": {
+    "id": "tx_farming_001",
+    "timestamp": "2026-07-24T13:12:00Z",
+    "points": 5000,
+    "currency": "LOYALTY_PTS"
+  },
+  "sender": {
+    "userId": "usr_mule_123",
+    "accountAgeMinutes": 45,
+    "ip": "181.44.12.90"
+  },
+  "receiver": {
+    "userId": "usr_receiver_999",
+    "ip": "181.44.12.90"
+  },
+  "device": {
+    "fingerprint": "fp_shared_abc",
+    "associatedAccountsCount": 5,
+    "isNewForUser": true,
+    "platform": "Android"
+  }
+}
